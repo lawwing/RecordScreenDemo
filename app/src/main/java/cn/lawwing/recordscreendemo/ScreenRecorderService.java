@@ -1,5 +1,6 @@
 package cn.lawwing.recordscreendemo;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,6 +17,8 @@ import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
+import static cn.lawwing.recordscreendemo.StaticDatas.DIR_NAME;
 
 /**
  * author lawwing time 2017/9/8 14:00 describe
@@ -82,8 +85,7 @@ public class ScreenRecorderService extends Service
     
     private MediaRecorder createMediaRecorder()
     {
-        SimpleDateFormat formatter = new SimpleDateFormat(
-                "yyyy-MM-dd-HH-mm-ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
         Date curDate = new Date(System.currentTimeMillis());
         String curTime = formatter.format(curDate).replace(" ", "");
         String videoQuality = "HD";
@@ -92,7 +94,11 @@ public class ScreenRecorderService extends Service
         {
             videoQuality = "SD";
         }
-        
+        File dirFirstFolder = new File(DIR_NAME);
+        if (!dirFirstFolder.exists())
+        { // 如果该文件夹不存在，则进行创建
+            dirFirstFolder.mkdirs();// 创建文件夹
+        }
         MediaRecorder mediaRecorder = new MediaRecorder();
         if (isAudio)
         {
@@ -100,8 +106,7 @@ public class ScreenRecorderService extends Service
         }
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setOutputFile(Environment.getExternalStorageDirectory()
-                + "/" + curTime + ".mp4");
+        mediaRecorder.setOutputFile(dirFirstFolder + "/" + curTime + ".mp4");
         mediaRecorder.setVideoSize(mScreenWidth, mScreenHeight);
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         if (isAudio)

@@ -8,9 +8,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 public class RecordScreenVoiceActivity extends AppCompatActivity
@@ -32,6 +35,12 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
     private boolean isAudio = true;
     
     private Button recordBtn;
+    
+    private CheckBox voiceCheckBox;
+    
+    private RadioGroup radioGroup;
+    
+    private ListView listView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -59,6 +68,47 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
     private void getView()
     {
         recordBtn = (Button) findViewById(R.id.recordBtn);
+        voiceCheckBox = (CheckBox) findViewById(R.id.cb_voice);
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        listView = (ListView) findViewById(R.id.listView);
+        
+        voiceCheckBox.setChecked(true);
+        voiceCheckBox.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener()
+                {
+                    
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView,
+                            boolean isChecked)
+                    {
+                        // TODO Auto-generated method stub
+                        isAudio = isChecked;
+                    }
+                });
+        
+        radioGroup.setOnCheckedChangeListener(
+                new RadioGroup.OnCheckedChangeListener()
+                {
+                    @Override
+                    public void onCheckedChanged(RadioGroup radioGroup,
+                            int checkedId)
+                    {
+                        switch (checkedId)
+                        {
+                            case R.id.sd_button:
+                                isVideoSd = true;
+                                break;
+                            case R.id.hd_button:
+                                isVideoSd = false;
+                                break;
+                            
+                            default:
+                                break;
+                            
+                        }
+                    }
+                });
+        
         if (isStarted)
         {
             statusIsStart();
@@ -85,8 +135,13 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
                 }
             }
         });
+        
+        setListView();
     }
-    
+
+    private void setListView() {
+    }
+
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startRecord()
     {
@@ -141,7 +196,7 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
                 this.startService(service);
                 isStarted = !isStarted;
                 statusIsStart();
-                // simulateHome();// 返回到首页,关闭当前页
+                simulateHome();// 返回到首页,关闭当前页
             }
             else
             {
@@ -150,8 +205,15 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
         }
     }
     
+    /**
+     * 模拟HOME键返回桌面的功能
+     */
     private void simulateHome()
     {
-        finish();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        this.startActivity(intent);
     }
+    
 }
