@@ -138,10 +138,11 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
         
         setListView();
     }
-
-    private void setListView() {
+    
+    private void setListView()
+    {
     }
-
+    
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startRecord()
     {
