@@ -2,6 +2,7 @@
 ### 一、参考网上的安卓录屏
 ####     1.ScreenRecorder.java  录制屏幕操作类
 ####     2.ScreenRecorderService.java    录制屏幕Service
+####     3.ScreenRecordReceiver.java    广播接受者类
 ### 
 ### 二、使用方法参考下面的类：
 ####     RecordScreenVoiceActivity.java
