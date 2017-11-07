@@ -13,3 +13,8 @@
      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
      <uses-permission android:name="android.permission.RECORD_AUDIO" />
      <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+###
+###
+###在Application的继承类的onCreate方法加入如下代码
+        // 每次打开APP
+     ShareedPreferenceUtils.setIsRecording(getApplicationContext(), false);
