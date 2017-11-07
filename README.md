@@ -7,9 +7,9 @@
 ####     RecordScreenVoiceActivity.java
 ####
 ### 切记：AndroidManifest.xml文件需要注册Service
-     <service android:name=".ScreenRecorderService"></service>
+          <service android:name=".ScreenRecorderService"></service>
 ### 也需要注册广播接收者
-     <receiver android:name=".ScreenRecordReceiver" android:enabled="true" android:exported="true"></receiver>
+          <receiver android:name=".ScreenRecordReceiver" android:enabled="true" android:exported="true"></receiver>
 ### 
 ### 三、需要的权限：
      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
