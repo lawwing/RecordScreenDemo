@@ -25,24 +25,20 @@
         <activity android:name=".MainActivity" />
         <activity android:name=".RecordScreenVoiceActivity">
 
-        </activity>
-
-        <service android:name=".ScreenRecorderService" />
-
-        <activity android:name=".TencentScreenActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
-        <service android:name=".ScreenRecorderService" />
+        <service android:name=".ScreenRecorderService"></service>
 
         <activity android:name=".TencentScreenActivity">
 
         </activity>
+
+
     </application>
 
 </manifest>
