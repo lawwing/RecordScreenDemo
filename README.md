@@ -8,13 +8,17 @@
 ###
 ### 切记：AndroidManifest.xml文件需要注册Service
      <service android:name=".ScreenRecorderService"></service>
+### 也需要注册广播接受者
+     <receiver
+            android:name=".ScreenRecordReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
 ### 
 ### 需要的权限：
      <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
      <uses-permission android:name="android.permission.RECORD_AUDIO" />
      <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 ###
-###
-###在Application的继承类的onCreate方法加入如下代码
+### 在Application的继承类的onCreate方法加入如下代码
         // 每次打开APP
      ShareedPreferenceUtils.setIsRecording(getApplicationContext(), false);
