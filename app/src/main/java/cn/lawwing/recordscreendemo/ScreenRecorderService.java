@@ -1,10 +1,13 @@
 package cn.lawwing.recordscreendemo;
 
+import static cn.lawwing.recordscreendemo.StaticDatas.DIR_NAME;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,16 +16,18 @@ import android.hardware.display.VirtualDisplay;
 import android.media.MediaRecorder;
 import android.media.projection.MediaProjection;
 import android.media.projection.MediaProjectionManager;
-import android.os.Environment;
+import android.net.LocalServerSocket;
+import android.net.LocalSocket;
+import android.net.LocalSocketAddress;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import static cn.lawwing.recordscreendemo.StaticDatas.DIR_NAME;
-
 /**
  * author lawwing time 2017/9/8 14:00 describe
  **/
+
 public class ScreenRecorderService extends Service
 {
     private static final String TAG = "ScreenRecorderService";
@@ -47,6 +52,12 @@ public class ScreenRecorderService extends Service
     
     private VirtualDisplay virtualDisplay;
     
+    private LocalServerSocket lss;
+    
+    private LocalSocket receiver;
+    
+    private LocalSocket sender;
+    
     @Override
     public void onCreate()
     {
@@ -57,6 +68,7 @@ public class ScreenRecorderService extends Service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
+        initLocalSocket();
         Log.e(TAG, "服务onStartCommand方法...");
         mResultCode = intent.getIntExtra("code", -1);
         mResultData = intent.getParcelableExtra("data");
@@ -107,6 +119,7 @@ public class ScreenRecorderService extends Service
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         mediaRecorder.setOutputFile(dirFirstFolder + "/" + curTime + ".mp4");
+        // mediaRecorder.setOutputFile(sender.getFileDescriptor());
         mediaRecorder.setVideoSize(mScreenWidth, mScreenHeight);
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         if (isAudio)
@@ -138,6 +151,7 @@ public class ScreenRecorderService extends Service
         return mediaRecorder;
     }
     
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private VirtualDisplay createVirtualDisplay()
     {
         return mediaProjection.createVirtualDisplay(TAG,
@@ -178,5 +192,25 @@ public class ScreenRecorderService extends Service
     public IBinder onBind(Intent intent)
     {
         return null;
+    }
+    
+    private void initLocalSocket()
+    {
+        receiver = new LocalSocket();
+        try
+        {
+            lss = new LocalServerSocket("H264");
+            receiver.connect(new LocalSocketAddress("H264"));
+            receiver.setReceiveBufferSize(500000);
+            receiver.setSendBufferSize(500000);
+            sender = lss.accept();
+            sender.setReceiveBufferSize(500000);
+            sender.setSendBufferSize(500000);
+        }
+        catch (IOException e1)
+        {
+            e1.printStackTrace();
+            Log.e("", "localSocket error:" + e1.getMessage());
+        }
     }
 }

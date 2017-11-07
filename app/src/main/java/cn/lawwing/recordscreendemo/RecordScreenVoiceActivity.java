@@ -197,7 +197,7 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
                 this.startService(service);
                 isStarted = !isStarted;
                 statusIsStart();
-                simulateHome();// 返回到首页,关闭当前页
+                // simulateHome();// 返回到首页,关闭当前页
             }
             else
             {

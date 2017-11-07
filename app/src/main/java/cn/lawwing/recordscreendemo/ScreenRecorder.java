@@ -38,8 +38,10 @@ public class ScreenRecorder extends Thread
     private MediaProjection mMediaProjection;
     
     // parameters for the encoder
-    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_AVC; // H.264 Advanced Video
-                                                         // Coding
+    private static final String MIME_TYPE = MediaFormat.MIMETYPE_VIDEO_AVC; // H.264
+                                                                            // Advanced
+                                                                            // Video
+    // Coding
     
     private static final int FRAME_RATE = 30; // 30 fps
     
@@ -168,8 +170,8 @@ public class ScreenRecorder extends Thread
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void encodeToVideoTrack(int index)
     {
+        /** 视频流 */
         ByteBuffer encodedData = mEncoder.getOutputBuffer(index);
-        
         if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) != 0)
         {
             // The codec config data was pulled out and fed to the muxer when we
@@ -223,15 +225,14 @@ public class ScreenRecorder extends Thread
     private void prepareEncoder() throws IOException
     {
         
-        MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE,
-                mWidth,
-                mHeight);
+        MediaFormat format = MediaFormat
+                .createVideoFormat(MIME_TYPE, mWidth, mHeight);
         format.setInteger(MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
         format.setInteger(MediaFormat.KEY_BIT_RATE, mBitRate);
         format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
-
+        
         Log.d(TAG, "created video format: " + format);
         mEncoder = MediaCodec.createEncoderByType(MIME_TYPE);
         mEncoder.configure(format,
