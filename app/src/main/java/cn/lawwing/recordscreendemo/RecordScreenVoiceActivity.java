@@ -143,6 +143,9 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
     {
     }
     
+    /**
+     * 开始录屏
+     */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startRecord()
     {
@@ -152,6 +155,9 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
         startActivityForResult(permissionIntent, REQUEST_CODE);
     }
     
+    /**
+     * 停止录屏
+     */
     private void stopRecording()
     {
         Intent service = new Intent(this, ScreenRecorderService.class);
@@ -176,6 +182,13 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
         outState.putBoolean(RECORD_STATUS, isStarted);
     }
     
+    /**
+     * 在回调里调用开始录制
+     * 
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
             Intent data)
