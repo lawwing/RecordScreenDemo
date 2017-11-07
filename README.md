@@ -8,9 +8,8 @@
 ####
 ### 切记：AndroidManifest.xml文件需要注册Service
      <service android:name=".ScreenRecorderService"></service>
-### 也需要注册广播接受者
-     <receiver
-            android:name=".ScreenRecordReceiver"
+### 也需要注册广播接收者
+     <receiver android:name=".ScreenRecordReceiver"
             android:enabled="true"
             android:exported="true"></receiver>
 ### 
