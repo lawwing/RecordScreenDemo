@@ -1,8 +1,8 @@
 # RecordScreenDemo
-参考网上的安卓录屏
+一、参考网上的安卓录屏
     ScreenRecorder.java  录制屏幕操作类
     ScreenRecorderService.java    录制屏幕Service
-
+\n
 使用方法参考下面的类：
     RecordScreenVoiceActivity.java
 
