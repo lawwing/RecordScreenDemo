@@ -3,11 +3,14 @@ package cn.lawwing.recordscreendemo;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.Loader;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -48,10 +51,17 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_screen_voice);
         
-        if (savedInstanceState != null)
-        {
-            isStarted = savedInstanceState.getBoolean(RECORD_STATUS);
-        }
+        // if (savedInstanceState != null)
+        // {
+        // Log.e("test", "savedInstanceState != null");
+        // isStarted = savedInstanceState.getBoolean(RECORD_STATUS);
+        // }
+        // else
+        // {
+        //
+        // Log.e("test", "savedInstanceState == null");
+        // }
+        isStarted = ShareedPreferenceUtils.isRecording(this);
         getView();
         getScreenBaseInfo();
     }
@@ -162,6 +172,7 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
     {
         Intent service = new Intent(this, ScreenRecorderService.class);
         stopService(service);
+        
         isStarted = !isStarted;
     }
     
@@ -198,16 +209,31 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
         {
             if (resultCode == RESULT_OK)
             {
+                doRegisterReceiver();
+                Intent intent = new Intent(RecordScreenVoiceActivity.this,
+                        ScreenRecordReceiver.class);
+                intent.putExtra("code", resultCode);
+                intent.putExtra("data", data);
+                intent.putExtra("audio", isAudio);
+                intent.putExtra("width", mScreenWidth);
+                intent.putExtra("height", mScreenHeight);
+                intent.putExtra("density", mScreenDensity);
+                intent.putExtra("quality", isVideoSd);
+                // Intent intent = new Intent();
+                intent.setAction("com.lawwing.record.start");
+                sendBroadcast(intent);
+                
                 // 获得权限，启动service开始录制
-                Intent service = new Intent(this, ScreenRecorderService.class);
-                service.putExtra("code", resultCode);
-                service.putExtra("data", data);
-                service.putExtra("audio", isAudio);
-                service.putExtra("width", mScreenWidth);
-                service.putExtra("height", mScreenHeight);
-                service.putExtra("density", mScreenDensity);
-                service.putExtra("quality", isVideoSd);
-                this.startService(service);
+                // Intent service = new Intent(this,
+                // ScreenRecorderService.class);
+                // service.putExtra("code", resultCode);
+                // service.putExtra("data", data);
+                // service.putExtra("audio", isAudio);
+                // service.putExtra("width", mScreenWidth);
+                // service.putExtra("height", mScreenHeight);
+                // service.putExtra("density", mScreenDensity);
+                // service.putExtra("quality", isVideoSd);
+                // this.startService(service);
                 isStarted = !isStarted;
                 statusIsStart();
                 // simulateHome();// 返回到首页,关闭当前页
@@ -230,4 +256,19 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
         this.startActivity(intent);
     }
     
+    private ScreenRecordReceiver recordReceiver;
+    
+    private void doRegisterReceiver()
+    {
+        recordReceiver = new ScreenRecordReceiver();
+        IntentFilter filter = new IntentFilter("com.lawwing.record.start");
+        registerReceiver(recordReceiver, filter);
+    }
+    
+    @Override
+    protected void onDestroy()
+    {
+        ShareedPreferenceUtils.setIsRecording(this, isStarted);
+        super.onDestroy();
+    }
 }

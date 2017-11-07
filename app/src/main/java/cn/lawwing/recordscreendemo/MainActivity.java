@@ -70,18 +70,20 @@ public class MainActivity extends Activity implements View.OnClickListener
     @Override
     public void onClick(View v)
     {
-        if (mRecorder != null)
-        {
-            mRecorder.quit();
-            mRecorder = null;
-            mButton.setText("Restart recorder");
-        }
-        else
-        {
-            Intent captureIntent = mMediaProjectionManager
-                    .createScreenCaptureIntent();
-            startActivityForResult(captureIntent, REQUEST_CODE);
-        }
+        // if (mRecorder != null)
+        // {
+        // mRecorder.quit();
+        // mRecorder = null;
+        // mButton.setText("Restart recorder");
+        // }
+        // else
+        // {
+        // Intent captureIntent = mMediaProjectionManager
+        // .createScreenCaptureIntent();
+        // startActivityForResult(captureIntent, REQUEST_CODE);
+        // }
+        startActivity(
+                new Intent(MainActivity.this, RecordScreenVoiceActivity.class));
     }
     
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

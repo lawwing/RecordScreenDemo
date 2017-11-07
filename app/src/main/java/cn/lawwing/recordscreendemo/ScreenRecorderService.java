@@ -22,6 +22,7 @@ import android.net.LocalSocketAddress;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 /**
@@ -65,6 +66,7 @@ public class ScreenRecorderService extends Service
         Log.e(TAG, "服务onCreate方法...");
     }
     
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
@@ -88,6 +90,7 @@ public class ScreenRecorderService extends Service
         return Service.START_NOT_STICKY;
     }
     
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private MediaProjection createMediaProjection()
     {
         return ((MediaProjectionManager) getSystemService(

@@ -22,23 +22,23 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
-        <activity android:name=".RecordScreenVoiceActivity">
-
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".RecordScreenVoiceActivity"></activity>
 
-        <service android:name=".ScreenRecorderService"></service>
+        <service android:name=".ScreenRecorderService" />
 
-        <activity android:name=".TencentScreenActivity">
+        <activity android:name=".TencentScreenActivity"></activity>
 
-        </activity>
-
-
+        <receiver
+            android:name=".ScreenRecordReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>

@@ -3,6 +3,7 @@ package cn.lawwing.recordscreendemo;
 import android.app.Application;
 import android.util.Log;
 
+import com.tencent.bugly.crashreport.CrashReport;
 import com.tencent.rtmp.TXLiveBase;
 import com.tencent.rtmp.TXLiveConstants;
 
@@ -15,10 +16,14 @@ public class RecordApp extends Application
     public void onCreate()
     {
         super.onCreate();
-        
+        // 每次打开APP
+        ShareedPreferenceUtils.setIsRecording(getApplicationContext(), false);
         String sdkver = TXLiveBase.getSDKVersionStr();
         Log.e("liteavsdk", "liteav sdk version is : " + sdkver);
         TXLiveBase.setConsoleEnabled(true);
         TXLiveBase.setLogLevel(TXLiveConstants.LOG_LEVEL_DEBUG);
+        
+        CrashReport
+                .initCrashReport(getApplicationContext(), "9d5501966c", false);
     }
 }
