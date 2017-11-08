@@ -1,13 +1,17 @@
 package cn.lawwing.recordscreendemo;
 
+import java.util.List;
+
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.Loader;
 import android.media.projection.MediaProjectionManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -19,7 +23,10 @@ import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import pub.devrel.easypermissions.EasyPermissions;
+
 public class RecordScreenVoiceActivity extends AppCompatActivity
+        implements EasyPermissions.PermissionCallbacks
 {
     private static final String RECORD_STATUS = "record_status";
     
@@ -141,7 +148,6 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
                 else
                 {
                     startRecord();
-                    statusIsStart();
                 }
             }
         });
@@ -159,10 +165,57 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void startRecord()
     {
-        MediaProjectionManager manager = (MediaProjectionManager) getSystemService(
-                Context.MEDIA_PROJECTION_SERVICE);
-        Intent permissionIntent = manager.createScreenCaptureIntent();
-        startActivityForResult(permissionIntent, REQUEST_CODE);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
+        {
+            Toast.makeText(RecordScreenVoiceActivity.this,
+                    "录制功能仅支持安卓5.0以及以上系统",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        
+        String[] perms = new String[] {
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO };
+        if (!EasyPermissions.hasPermissions(RecordScreenVoiceActivity.this,
+                perms))
+        {
+            EasyPermissions.requestPermissions(RecordScreenVoiceActivity.this,
+                    "需要访问手机存储权限与摄像头权限，请在系统提醒时选择允许！",
+                    10086,
+                    perms);
+        }
+        else
+        {
+            showDialog();
+        }
+    }
+    
+    private void showDialog()
+    {
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(
+                RecordScreenVoiceActivity.this);
+        normalDialog.setIcon(R.mipmap.ic_launcher);
+        normalDialog.setTitle("提醒");
+        normalDialog.setMessage("若提示\"将开始截取您的屏幕上显示的所有内容\"，请点击立即开始即可开始录制");
+        normalDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which)
+                    {
+                        // ...To-do
+                        MediaProjectionManager manager = (MediaProjectionManager) getSystemService(
+                                Context.MEDIA_PROJECTION_SERVICE);
+                        Intent permissionIntent = manager
+                                .createScreenCaptureIntent();
+                        startActivityForResult(permissionIntent, REQUEST_CODE);
+                        statusIsStart();
+                    }
+                });
+        
+        // 显示
+        normalDialog.show();
     }
     
     /**
@@ -240,7 +293,8 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
             }
             else
             {
-                Toast.makeText(this, "用户取消", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "取消录屏", Toast.LENGTH_SHORT).show();
+                statusIsStop();
             }
         }
     }
@@ -271,4 +325,48 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
         ShareedPreferenceUtils.setIsRecording(this, isStarted);
         super.onDestroy();
     }
+    
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms)
+    {
+        // 成功
+        if (requestCode == 10086)
+        {
+            Log.e("test", perms.size() + "success size");
+            if (perms.size() == 4)
+            {
+                showDialog();
+            }
+        }
+    }
+    
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms)
+    {
+        
+        // 失败
+        if (requestCode == 10086)
+        {
+            Log.e("test", perms.size() + "faild size");
+            Toast.makeText(RecordScreenVoiceActivity.this,
+                    "请务必打开全部权限才能录制",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+    
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+            String[] permissions, int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode,
+                permissions,
+                grantResults);
+        
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode,
+                permissions,
+                grantResults,
+                this);
+    }
+    
 }
