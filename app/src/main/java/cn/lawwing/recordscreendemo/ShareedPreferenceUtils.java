@@ -19,6 +19,8 @@ public class ShareedPreferenceUtils
     
     public static final String IS_RECORDING = "appToken";
     
+    public static final String LOGIN_ACCOUNT = "login_account";
+    
     public static SharedPreferences getSharedPreferences(Context context)
     {
         return PreferenceManager.getDefaultSharedPreferences(context);
@@ -36,4 +38,16 @@ public class ShareedPreferenceUtils
         return sp.getBoolean(IS_RECORDING, false);
     }
     
+    public static void setLoginAccount(Context context, String acount)
+    {
+        SharedPreferences sp = getSharedPreferences(context);
+        sp.edit().putString(LOGIN_ACCOUNT, acount).apply();
+    }
+    
+    public static String getLoginAccount(Context context)
+    {
+        SharedPreferences sp = ShareedPreferenceUtils
+                .getSharedPreferences(context);
+        return sp.getString(LOGIN_ACCOUNT, "");
+    }
 }

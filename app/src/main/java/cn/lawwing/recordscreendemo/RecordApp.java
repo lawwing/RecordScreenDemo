@@ -18,6 +18,8 @@ public class RecordApp extends Application
         super.onCreate();
         // 每次打开APP
         ShareedPreferenceUtils.setIsRecording(getApplicationContext(), false);
+        ShareedPreferenceUtils.setLoginAccount(getApplicationContext(),
+                "15622104962");
         String sdkver = TXLiveBase.getSDKVersionStr();
         Log.e("liteavsdk", "liteav sdk version is : " + sdkver);
         TXLiveBase.setConsoleEnabled(true);

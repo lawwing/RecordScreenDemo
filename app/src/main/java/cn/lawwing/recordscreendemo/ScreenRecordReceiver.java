@@ -33,6 +33,10 @@ public class ScreenRecordReceiver extends BroadcastReceiver
                             intent.getIntExtra("density", 0));
                     service.putExtra("quality",
                             intent.getBooleanExtra("quality", true));
+                    service.putExtra("fileName",
+                            intent.getStringExtra("fileName"));
+                    service.putExtra("filePath",
+                            intent.getStringExtra("filePath"));
                     context.startService(service);
                 }
                 else

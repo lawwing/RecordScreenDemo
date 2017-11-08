@@ -1,5 +1,9 @@
 package cn.lawwing.recordscreendemo;
 
+import static cn.lawwing.recordscreendemo.StaticDatas.DIR_NAME;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import android.Manifest;
@@ -57,17 +61,6 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_screen_voice);
-        
-        // if (savedInstanceState != null)
-        // {
-        // Log.e("test", "savedInstanceState != null");
-        // isStarted = savedInstanceState.getBoolean(RECORD_STATUS);
-        // }
-        // else
-        // {
-        //
-        // Log.e("test", "savedInstanceState == null");
-        // }
         isStarted = ShareedPreferenceUtils.isRecording(this);
         getView();
         getScreenBaseInfo();
@@ -152,11 +145,6 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
             }
         });
         
-        setListView();
-    }
-    
-    private void setListView()
-    {
     }
     
     /**
@@ -227,6 +215,22 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
         stopService(service);
         
         isStarted = !isStarted;
+        final AlertDialog.Builder endDialog = new AlertDialog.Builder(
+                RecordScreenVoiceActivity.this);
+        endDialog.setIcon(R.mipmap.ic_launcher);
+        endDialog.setTitle("提醒");
+        endDialog.setMessage("录制结束，请在手机存储根目录下的mysceenVideo文件夹查看");
+        endDialog.setPositiveButton("确定", new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                // ...To-d
+            }
+        });
+        
+        // 显示
+        endDialog.show();
     }
     
     private void statusIsStop()
@@ -272,6 +276,8 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
                 intent.putExtra("height", mScreenHeight);
                 intent.putExtra("density", mScreenDensity);
                 intent.putExtra("quality", isVideoSd);
+                intent.putExtra("fileName", getFileName());
+                intent.putExtra("filePath", getFilePath());
                 // Intent intent = new Intent();
                 intent.setAction("com.lawwing.record.start");
                 sendBroadcast(intent);
@@ -297,6 +303,22 @@ public class RecordScreenVoiceActivity extends AppCompatActivity
                 statusIsStop();
             }
         }
+    }
+    
+    private String getFilePath()
+    {
+        // 生成文件保存的路径
+        return DIR_NAME + ShareedPreferenceUtils.getLoginAccount(this) + "/";
+    }
+    
+    private String getFileName()
+    {
+        // 生成文件名
+        SimpleDateFormat formatter = new SimpleDateFormat(
+                "yyyy年MM月dd日 HH:mm:ss");
+        Date curDate = new Date(System.currentTimeMillis());
+        String curTime = formatter.format(curDate).replace(" ", "");
+        return "视频会议-" + curTime;
     }
     
     /**

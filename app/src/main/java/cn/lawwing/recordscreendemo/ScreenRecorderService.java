@@ -59,6 +59,10 @@ public class ScreenRecorderService extends Service
     
     private LocalSocket sender;
     
+    private String fileName = "";
+    
+    private String filePath = "";
+    
     @Override
     public void onCreate()
     {
@@ -81,6 +85,8 @@ public class ScreenRecorderService extends Service
         
         isAudio = intent.getBooleanExtra("audio", true);
         isVideoSd = intent.getBooleanExtra("quality", true);
+        fileName = intent.getStringExtra("fileName");
+        filePath = intent.getStringExtra("filePath");
         
         mediaProjection = createMediaProjection();
         mediaRecorder = createMediaRecorder();
@@ -100,16 +106,14 @@ public class ScreenRecorderService extends Service
     
     private MediaRecorder createMediaRecorder()
     {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
-        Date curDate = new Date(System.currentTimeMillis());
-        String curTime = formatter.format(curDate).replace(" ", "");
+        
         String videoQuality = "HD";
         
         if (isVideoSd)
         {
             videoQuality = "SD";
         }
-        File dirFirstFolder = new File(DIR_NAME);
+        File dirFirstFolder = new File(filePath);
         if (!dirFirstFolder.exists())
         { // 如果该文件夹不存在，则进行创建
             dirFirstFolder.mkdirs();// 创建文件夹
@@ -121,7 +125,7 @@ public class ScreenRecorderService extends Service
         }
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setOutputFile(dirFirstFolder + "/" + curTime + ".mp4");
+        mediaRecorder.setOutputFile(dirFirstFolder + "/" + fileName + ".mp4");
         // mediaRecorder.setOutputFile(sender.getFileDescriptor());
         mediaRecorder.setVideoSize(mScreenWidth, mScreenHeight);
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
